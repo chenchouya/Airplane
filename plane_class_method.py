@@ -1,73 +1,10 @@
 # coding=utf-8
-import os
 import pygame
 import random
 from os import getcwd
-from pygame.locals import *
+from common import *
 
 pygame.mixer.init()
-
-
-def load_image(name, colorkey=None, alpha=False):
-    fullname = os.path.join('ui', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error, message:
-        print 'Cannot load image:', name
-        raise SystemExit, message
-    if alpha:
-        image = image.convert_alpha()
-    else:
-        image = image.convert()
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey, RLEACCEL)
-    return image, image.get_rect()
-
-
-def load_sound(name):
-    class NoneSound:
-        def __init__(self):
-            pass
-
-        def play(self): pass
-
-    if not pygame.mixer:
-        return NoneSound()
-    fullname = os.path.join('sound', name)
-    try:
-        sound = pygame.mixer.Sound(fullname)
-    except pygame.error, message:
-        print 'Cannot load sound:', name
-        raise SystemExit, message
-    return sound
-
-
-def load_font(name, size=35):
-    fullname = os.path.join("font", name)
-    try:
-        font = pygame.font.Font(fullname, size)
-    except pygame.error, message:
-        print 'Cannot load font:', name
-        raise SystemError, message
-    return font
-
-
-def draw_begin_bg(bg_begin, game_begin, game_score, game_help, game_quit, game_music, sound_play):
-    screen_init = pygame.display.get_surface()
-    screen_init.blit(bg_begin, (0, 0))
-    # 画背景
-    screen_init.blit(game_begin, (500, 50))
-    screen_init.blit(game_score, (540, 100))
-    screen_init.blit(game_help, (580, 150))
-    screen_init.blit(game_quit, (620, 200))
-    screen_init.blit(game_music, (660, 250))
-    # 画出四个选项
-
-    screen_init.blit(sound_play, (810, 250))
-    pygame.display.update()
-
 
 # def explosion_contain(enemy, bomb):
 #     if (bomb.x - 50 < enemy.x) and (enemy.x + enemy.image.get_width() < bomb.x + bomb.image.get_width() + 50) and (
@@ -85,6 +22,7 @@ class Plane(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.bomb_store = 4
         self.stop = False
+        self.life = 3
         self.restart()
 
     def restart(self):

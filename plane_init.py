@@ -57,82 +57,10 @@ author = small_font.render("Author:Xie Jun Dong", True, (0, 0, 0))
 ##---------------------------###
 
 
-##--------游戏元素-----------##
-allSprites = MyGroup()
-enemy_group = pygame.sprite.RenderPlain()
-
-##-------子弹------####
-
-bullet_group = pygame.sprite.RenderPlain()
-# 子弹数量
-index_b = 0
-# 即将激活的子弹序号
-interval_b = 100
-# 子弹发射间隔
-
-##---------炸弹-------####
-
-# 生成炸弹
-bomb_group = pygame.sprite.RenderPlain()
-bomb_location_group = ((20, 700), (50, 700), (80, 700), (110, 700))
-Bomb_icon_group = []
-# 创建炸弹图标的列表
-for lo in bomb_location_group:
-    Bomb_icon_group.append(BombIcon(lo))
-# 初始化炸弹图标列表
-
-##--------本机--------####
-plane = Plane()
-plane.add(allSprites)
-# 生成本机
-plane_location_group = ((392, 700), (423, 700), (453, 700))
-plane_icon_group = []
-for lo in plane_location_group:
-    plane_icon_group.append(Plane_icon(lo))
-
-# 初始化飞机图标列表
-
-
-##--------其他------#####
-
-interval_e = 1000
-# 间隔一段时间敌机数量增加标志
-
-life = 3
-# 三条命
-
-score = 0
-# 记录分数
-pause = False
-music_icon = True
-gameover = False
 ###########################################################
 
 ##################开始画面################################
 
-pygame.display.set_caption("shoot!shoot!shoot!")
-# 标题
-bg_begin = pygame.image.load(r"ui/shoot_background/bg_begin.jpg")
-
-game_begin = wel_font.render("Game Begin", True, (0, 0, 0))
-game_score = wel_font.render("High Score", True, (0, 0, 0))
-game_help = wel_font.render("Game Help", True, (0, 0, 0))
-game_quit = wel_font.render("Game Quit", True, (0, 0, 0))
-game_music = wel_font.render("Music", True, (0, 0, 0))
-
-# 四个选项
-screen_init.blit(bg_begin, (0, 0))
-# 画背景
-screen_init.blit(game_begin, game_begin.get_rect(x=500, y=50))
-screen_init.blit(game_score, game_score.get_rect(x=540, y=100))
-screen_init.blit(game_help, game_help.get_rect(x=580, y=150))
-screen_init.blit(game_quit, game_quit.get_rect(x=620, y=200))
-screen_init.blit(game_music, game_music.get_rect(x=660, y=250))
-
-# 画出四个选项
-
-screen_init.blit(sound_play, (810, 250))
-pygame.display.update()
 
 ####---------------------检测用户点击选项-----------------#########
 while True:
@@ -202,7 +130,7 @@ while True:
                     if 800 < x < 900 and 480 < y < 520:
                         back_flag = 1
 
-        # draw_begin_bg(bg_begin, game_begin, game_score, game_help, game_quit, game_music, sound_play)
+        # draw_begin_bg(bg_begin, game_begin, game_score, game_help, game_quit, game_music, sound_play_icon)
         continue
 
     # 帮助
