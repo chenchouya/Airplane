@@ -1,7 +1,8 @@
 #coding=utf-8
-
-
+import constants
 from activity import *
+
+
 class ScoreActivity(Activity):
 
     def __init__(self, screen, background_fn):

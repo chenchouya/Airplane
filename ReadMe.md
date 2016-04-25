@@ -6,7 +6,8 @@
     python 2.7
     pygame
 
-###Install
+###Install(well with linux)
+#####Ubuntu(Debian)
     sudo apt-get install python
     sudo apt-get install python-pygame
 

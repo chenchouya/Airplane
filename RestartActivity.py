@@ -1,11 +1,13 @@
 #coding=utf-8
 
+import constants
 from activity import *
+
 
 class RestartActivity(Activity):
     def __init__(self, screen, background_fn):
         Activity.__init__(self, screen, background_fn)
-        self.game_restart_btn = load_image(constants.game_over_bg_fn)
+        self.game_restart_btn = load_image(constants.game_over_bg_fn)[0]
         self.wel_font = load_font(constants.wel_font_fn, constants.font_size)
         self.game_restart = self.wel_font.render("Restart now", True, (0, 0, 0))
         self.game_quit = self.wel_font.render("Quit", True, (0, 0, 0))

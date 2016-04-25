@@ -12,24 +12,25 @@ bullet1_pic = os.path.join("shoot", "bullet1.png")
 bullet2_pic = os.path.join("shoot", "bullet2.png")
 bullet3_pic = os.path.join("shoot", "bullet1.png")
 boom_pic = os.path.join("shoot", "boom.jpg")
+bomb_pic = os.path.join("shoot", "bomb.png")
 
 main_background_fn = os.path.join("shoot_background", "bg_begin.jpg")
 game_background_fn = os.path.join('shoot_background', 'bg00.jpg')
-help_background_fn = "shoot_background/help.jpg"
-highscore_background_fn = "shoot_background/high_score.jpg"  # 背景图片
+help_background_fn = os.path.join("shoot_background", "help.jpg")
+highscore_background_fn = os.path.join("shoot_background", "high_score.jpg")  # 背景图片
 game_over_bg_fn = os.path.join("shoot_background", "game_over_bg.jpg")  # 游戏结束背景图片
 # 我军飞机图片载入
-pause_game_fn = r"shoot/game_pause_nor.png"
+pause_game_fn = os.path.join("shoot", "game_pause_nor.png")
 # 游戏暂停图标
-continue_game_fn = r"shoot/game_resume_nor.png"
+continue_game_fn = os.path.join("shoot", "game_resume_nor.png")
 # 游戏继续图标
 sound_close_fn = "bkmusic_close.png"
 sound_play_icon_fn = "bkmusic_play.png"
 # 音乐开关
-enemy1_down1_fn = r"shoot/enemy1_down1.png"
-enemy1_down2_fn = r"shoot/enemy1_down2.png"
-enemy1_down3_fn = r"shoot/enemy1_down3.png"
-enemy1_down4_fn = r"shoot/enemy1_down4.png"
+enemy1_down1_fn = os.path.join("shoot", "enemy1_down1.png")
+enemy1_down2_fn = os.path.join("shoot", "enemy1_down2.png")
+enemy1_down3_fn = os.path.join("shoot", "enemy1_down3.png")
+enemy1_down4_fn = os.path.join("shoot", "enemy1_down4.png")
 # 敌机1爆炸效果
 my_plane_down1_fn = os.path.join("shoot", "hero_blowup_n1.png")
 my_plane_down2_fn = os.path.join("shoot", "hero_blowup_n2.png")
@@ -64,9 +65,13 @@ show_score_font_fn = r"wel_font.ttf"
 # interval
 ufo1_interval = 20.0
 ufo2_interval = 30.0
+enemy12_interval = 250  # ms
 enemy3_interval = 10.0
-bullet2_last = 15.0
-bullet3_last = 20.0
+bullet2_last = 10.0
+bullet3_last = 10.0
+
+# other
+enemy3_chongci_dis = 200
 #User define events
 WELCOME_SCREEN_EVENT = USEREVENT + 1
 SHOW_HELP_EVENT = USEREVENT + 2

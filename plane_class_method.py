@@ -8,13 +8,6 @@ import constants
 from common import *
 
 
-# def explosion_contain(enemy, bomb):
-#     if (bomb.x - 50 < enemy.x) and (enemy.x + enemy.image.get_width() < bomb.x + bomb.image.get_width() + 50) and (
-#                 enemy.y > bomb.y - 50) and (enemy.y + enemy.image.get_height() < bomb.y + bomb.image.get_height() + 50):
-#         enemy.restart()
-#
-#
-# # 检测在巨型炸弹爆炸范围内有无敌机
 # 定义我机
 class Plane(pygame.sprite.Sprite):
     def __init__(self):
@@ -113,6 +106,8 @@ class Enemy(pygame.sprite.Sprite):
         self.acceleration = 0.2
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-200, -50)
+        self.bullet_store = 0
+        self.launch_bullet = False
 
     def restart(self):
         self.stop = False
@@ -170,7 +165,10 @@ class Enemy2(Enemy):
         if self.rect.bottom <= self.area.height:
             if not self.stop:
                 self.rect.y = round(self.rect.y + random.random())
-                if self.rect.y > random.randint(50, self.area.height / 2 - 200) and self.bullet_store > 0:
+                if self.rect.y > 50 and self.bullet_store == 2:
+                    self.launch_bullet = True
+                    self.bullet_store -= 1
+                if self.rect.y > 150 and self.bullet_store == 1:
                     self.launch_bullet = True
                     self.bullet_store -= 1
         else:
@@ -199,13 +197,18 @@ class Enemy3(Enemy):
         self.acceleration = 0.0025
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-100, -50)
+        self.launch_bullet = False
+        self.bullet_store = 1
 
     def update(self):
         self.accelerate()
         if self.rect.bottom <= 650:
             if not self.stop:
+                if self.bullet_store > 0 and self.rect.y > 0:
+                    self.launch_bullet = True
+                    self.bullet_store -= 1
                 self.rect.y += self.speed
-                if self.rect.y - self.player_pos[1] < 100:
+                if self.player_pos[1] - self.rect.y < constants.enemy3_chongci_dis:
                     self.rect.x += -self.h_speed if self.rect.x > self.player_pos[0] else self.h_speed
         else:
             self.kill()
@@ -338,7 +341,7 @@ class EnemyBullet(Bullet):
 class Bomb(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image("shoot/bomb.png", alpha=True)
+        self.image, self.rect = load_image(constants.bomb_pic, alpha=True)
         self.boom_image, self.boom_rect = load_image(constants.boom_pic, -1)
         self.boom_image = pygame.transform.scale(self.boom_image,
                                                  (int(self.boom_rect.width / 3), int(self.boom_rect.height / 3)))
@@ -363,7 +366,7 @@ class Bomb(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (int(self.rect.width * 1.2), int(self.rect.height * 1.2)))
         self.rect = self.image.get_rect(x=self.rect.x, y=self.rect.y)
 
-    def explode(self, enemy_group):
+    def explode(self):
         self.raw_rect = self.rect
         self.image, self.rect = self.boom_image, self.boom_rect
 
