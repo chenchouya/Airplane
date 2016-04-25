@@ -36,8 +36,8 @@ class GameActivity(Activity):
         self.enemy1_group = pygame.sprite.RenderPlain()
         self.enemy2_group = pygame.sprite.RenderPlain()
         self.enemy3_group = pygame.sprite.RenderPlain()
-        self.all_enemies = pygame.sprite.RenderPlain()
-        self.no_colli_group = pygame.sprite.RenderPlain()
+        self.all_enemies = MyGroup()
+        self.no_colli_group = MyGroup()
 
         self.bullet_group = pygame.sprite.RenderPlain()
         self.bullet1_group = pygame.sprite.RenderPlain()
@@ -98,22 +98,8 @@ class GameActivity(Activity):
 
         pygame.mouse.set_visible(False)
 
-    # def enemy1_2_appear(self):
-    #     if not self.pause:
-    #         if len(self.enemy1_group) <= self.max_enemy1:
-    #             Enemy().add(self.enemy1_group, self.all_enemies, self.allSprites, self.no_colli_group)
-    #         if random.randint(1, 10) > 6 and len(self.enemy2_group) <= self.max_enemy2:
-    #             Enemy2().add(self.enemy2_group, self.all_enemies, self.allSprites, self.no_colli_group)
-    #             self.enemy3_appear_sound.play()
-    #     threading.Timer(0.5, self.enemy1_2_appear, ())
-
-    def run(self):
-        self.screen.blit(self.background, (0, 0))
-        self.setup()
-        pygame.display.update()
+    def settimers(self):
         pygame.time.set_timer(constants.ENEMY_APPEAR_EVENT, constants.enemy12_interval)
-        # self.timer_e1_2 = threading.Timer(0.5, self.enemy1_2_appear, ())
-        # self.timer_e1_2.start()
         pygame.time.set_timer(constants.BULLET_SHOOT_EVENT, 250)
         self.timer_ufo1 = threading.Timer(constants.ufo1_interval, self.ufo1_appear, ())
         self.timer_ufo1.start()
@@ -121,6 +107,12 @@ class GameActivity(Activity):
         self.timer_ufo2.start()
         self.timer_e3 = threading.Timer(constants.enemy3_interval, self.enemy3_appear, ())
         self.timer_e3.start()
+
+    def run(self):
+        self.screen.blit(self.background, (0, 0))
+        self.setup()
+        self.settimers()
+        pygame.display.update()
         self.game_bgm.play(loops=-1)
         while True:
             self.change_level()
@@ -134,11 +126,6 @@ class GameActivity(Activity):
                 self.finished()
                 pygame.time.wait(2000)
                 break
-                # if self.changed:
-                #     self.screen.blit(self.background, (0, 0))
-                #     self.on_change()
-                #     pygame.display.flip()
-                # self.changed = False
 
     def handle_events(self):
         for event in self.get_event():
@@ -173,7 +160,7 @@ class GameActivity(Activity):
                 if not self.pause:
                     if len(self.bullet1_group) <= 5:
                         Bullet1().add(self.bullet1_group, self.bullet_group, self.allSprites)
-                    if self.plane.has_bullet2 and len(self.bullet2_group) <= len(self.enemy2_group):
+                    if self.plane.has_bullet2 and len(self.bullet2_group) <= 10:
                         Bullet2(self.plane.rect.bottomleft).add(self.bullet2_group, self.bullet_group, self.allSprites)
                         Bullet2(self.plane.rect.bottomright).add(self.bullet2_group, self.bullet_group, self.allSprites)
                     if self.plane.has_bullet3 and len(self.bullet3_group) < 10:
@@ -196,7 +183,7 @@ class GameActivity(Activity):
 
             for bomb, enemies in pygame.sprite.groupcollide(self.bomb_group, self.all_enemies, 0, 0,
                                                             self.collide_mask).items():
-                bomb.explode()
+                bomb.explode(self.all_enemies)
                 for enemy in enemies:
                     enemy.explode()
                 self.great_boom_sound.play()
@@ -390,9 +377,9 @@ class GameActivity(Activity):
 
     def check_life_add(self):
 
-        if self.score / 100000 > self._life_count:
+        if self.score / 50000 > self._life_count:
             self.add_life()
-            self._life_count = self.score / 100000
+            self._life_count = self.score / 50000
 
     def add_life(self):
         if self.plane.life < 3:

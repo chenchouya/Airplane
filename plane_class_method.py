@@ -344,7 +344,7 @@ class Bomb(pygame.sprite.Sprite):
         self.image, self.rect = load_image(constants.bomb_pic, alpha=True)
         self.boom_image, self.boom_rect = load_image(constants.boom_pic, -1)
         self.boom_image = pygame.transform.scale(self.boom_image,
-                                                 (int(self.boom_rect.width / 3), int(self.boom_rect.height / 3)))
+                                                 (int(self.boom_rect.width / 2), int(self.boom_rect.height / 2)))
         self.boom_rect = self.boom_image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.speed = 0.3
@@ -366,14 +366,25 @@ class Bomb(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (int(self.rect.width * 1.2), int(self.rect.height * 1.2)))
         self.rect = self.image.get_rect(x=self.rect.x, y=self.rect.y)
 
-    def explode(self):
+    def explode(self, enemies):
         self.raw_rect = self.rect
         self.image, self.rect = self.boom_image, self.boom_rect
 
         self.rect.center = self.raw_rect.center
         self.stop = True
+        enemies.suspend()
+        pygame.sprite.spritecollide(self, enemies, dokill=True, collided=self.collide_detect)
+        enemies.recover()
         timer = threading.Timer(0.8, self.finish, ())
         timer.start()
+
+    @staticmethod
+    def collide_detect(bomb, enemy):
+        distance = ((enemy.rect.center[0] - bomb.rect.center[0]) ** 2
+                    + (enemy.rect.center[1] - bomb.rect.center[1]) ** 2)
+        if distance < (bomb.rect.width / 2) ** 2:
+            return True
+        return False
 
     def suspend(self):
         self.stop = True
