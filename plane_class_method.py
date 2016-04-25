@@ -475,7 +475,7 @@ class BombIcon(pygame.sprite.Sprite):
 
 
 # 定义炸弹图标，继承自精灵
-class Plane_icon(pygame.sprite.Sprite):
+class PlaneIcon(pygame.sprite.Sprite):
     def __init__(self, init_pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(getcwd() + r"/ui/plane_small.png")

@@ -28,6 +28,7 @@ class GameActivity(Activity):
         self.collide_mask = pygame.sprite.collide_mask
 
         self._life_count = 0
+        self._bomb_count = 0
 
     def setup(self):
 
@@ -50,7 +51,7 @@ class GameActivity(Activity):
         bomb_icon_y = self.screen.get_rect().height - 175
         self.bomb_location_group = ((20, bomb_icon_y), (50, bomb_icon_y), (80, bomb_icon_y), (110, bomb_icon_y))
 
-        self.Bomb_icon_group = [BombIcon(x) for x in self.bomb_location_group]
+        self.bomb_icon_group = [BombIcon(x) for x in self.bomb_location_group]
         # 创建炸弹图标的列表
 
         self.plane = Plane()
@@ -58,7 +59,7 @@ class GameActivity(Activity):
 
         plane_icon_y = self.screen.get_rect().height - 175
         self.plane_location_group = ((388, plane_icon_y), (388 + 30, plane_icon_y), (388 + 60, plane_icon_y))
-        self.plane_icon_group = [Plane_icon(x) for x in self.plane_location_group]
+        self.plane_icon_group = [PlaneIcon(x) for x in self.plane_location_group]
 
         # 初始化飞机图标列表
         self.ufo1 = UFO1()
@@ -127,6 +128,7 @@ class GameActivity(Activity):
             self.handle_events()
             self.detect_collision()
             self.check_life_add()
+            self.check_bomb_add()
             self.draw_spirites()
             if self.quit:
                 self.finished()
@@ -142,9 +144,9 @@ class GameActivity(Activity):
         for event in self.get_event():
             if event.type == pygame.KEYDOWN:
                 if event.key == K_SPACE and len(self.bomb_group) < 4:
-                    if len(self.Bomb_icon_group) > 0:
+                    if len(self.bomb_icon_group) > 0:
                         Bomb().add(self.bomb_group, self.allSprites)
-                        self.Bomb_icon_group.pop(-1)
+                        self.bomb_icon_group.pop(-1)
                         self.score += 500
                         # 如果按下空格键，那么发射一枚炸弹,播放音效
                 if event.key == K_v:
@@ -251,7 +253,7 @@ class GameActivity(Activity):
 
             self.allSprites.update()
             self.allSprites.draw(self.screen)
-            for bomb_list in self.Bomb_icon_group:
+            for bomb_list in self.bomb_icon_group:
                 self.screen.blit(bomb_list.image, bomb_list.rect)
 
             for plane_list in self.plane_icon_group:
@@ -395,7 +397,16 @@ class GameActivity(Activity):
     def add_life(self):
         if self.plane.life < 3:
             self.plane.life += 1
-            self.plane_icon_group.insert(0, Plane_icon(self.plane_location_group[2 - len(self.plane_icon_group)]))
+            self.plane_icon_group.insert(0, PlaneIcon(self.plane_location_group[2 - len(self.plane_icon_group)]))
+
+    def check_bomb_add(self):
+        if self.score / 20000 > self._bomb_count:
+            self.add_bomb()
+            self._bomb_count = self.score / 20000
+
+    def add_bomb(self):
+        if len(self.bomb_icon_group) < 4:
+            self.bomb_icon_group.append(BombIcon(self.bomb_location_group[len(self.bomb_icon_group)]))
 
     def get_event(self):
         events = pygame.event.get()
