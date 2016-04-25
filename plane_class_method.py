@@ -431,7 +431,7 @@ class UFO1(UFO):
     def restart(self):
         self.active = False
         self.rect.x = random.randint(self.area.width / 2 - 40, self.area.width / 2 + 40)
-        self.rect.y = random.randint(-150, -80)
+        self.rect.y = random.randint(-150, -120)
         self.direction = True if (self.rect.x < self.area.width / 2) else False
 
 
