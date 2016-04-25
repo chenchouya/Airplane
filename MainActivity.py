@@ -1,6 +1,7 @@
 #coding=utf-8
-from activity import *
 import constants
+from activity import *
+
 
 class MainActivity(Activity):
     def __init__(self, screen, background_fn):
@@ -10,9 +11,9 @@ class MainActivity(Activity):
         self.game_score = self.font.render("High Score", True, (0, 0, 0))
         self.game_help = self.font.render("Game Help", True, (0, 0, 0))
         self.game_quit = self.font.render("Game Quit", True, (0, 0, 0))
-        self.game_music = self.font.render("Music", True, (0, 0, 0))
-        self.sound_play_icon = load_image(constants.sound_play_icon_fn, alpha=True)[0]
-        self.music_icon = True
+        # self.game_music = self.font.render("Music", True, (0, 0, 0))
+        # self.sound_play_icon = load_image(constants.sound_play_icon_fn, alpha=True)[0]
+        # self.music_icon = True
 
     def setup(self):
         pygame.display.set_caption("shoot!shoot!shoot!")
@@ -27,9 +28,9 @@ class MainActivity(Activity):
         self.screen.blit(self.game_score, self.game_score.get_rect(x=540, y=100))
         self.screen.blit(self.game_help, self.game_help.get_rect(x=580, y=150))
         self.screen.blit(self.game_quit, self.game_quit.get_rect(x=620, y=200))
-        self.screen.blit(self.game_music, self.game_music.get_rect(x=660, y=250))
+        # self.screen.blit(self.game_music, self.game_music.get_rect(x=660, y=250))
         # 画出四个选项
-        self.screen.blit(self.sound_play_icon, (810, 250))
+        # self.screen.blit(self.sound_play_icon, (810, 250))
 
         pygame.display.flip()
         while True:
@@ -66,7 +67,4 @@ class MainActivity(Activity):
                 elif self.game_quit.get_rect(x=620, y=200).collidepoint(pos):
                     pygame.quit()
                     exit()
-                    # pygame.event.post(Event=pygame.event.Event(constants.QUIT_EVENT))
-                elif self.game_music.get_rect(x=660, y=250).collidepoint(pos):
-                    pass
 

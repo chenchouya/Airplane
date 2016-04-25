@@ -1,16 +1,14 @@
 #coding=utf-8
-from MainActivity import *
-from HelpActivity import *
-from ScoreActivity import *
 from GameActivity import *
+from HelpActivity import *
+from MainActivity import *
 from RestartActivity import *
-
+from ScoreActivity import *
 
 if __name__ == "__main__":
     print USEREVENT
     print NUMEVENTS
     pygame.init()
-    # pygame.mixer.init()
     # 初始化
 
     pygame.event.post(pygame.event.Event(constants.WELCOME_SCREEN_EVENT))
@@ -26,7 +24,7 @@ if __name__ == "__main__":
                 high_score_screen = pygame.display.set_mode((960, 600), 0, 32)
                 ScoreActivity(high_score_screen, constants.highscore_background_fn).run()
             elif event.type == constants.BEGIN_GAME_EVENT:
-                game_screen = pygame.display.set_mode((480, 852), 0, 32)
+                game_screen = pygame.display.set_mode((480, 840), 0, 32)
                 GameActivity(game_screen, constants.game_background_fn).run()
             elif event.type == constants.RESTART_EVENT:
                 restart_screen = pygame.display.set_mode((960, 600), 0, 32)

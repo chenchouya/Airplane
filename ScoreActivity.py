@@ -17,7 +17,7 @@ class ScoreActivity(Activity):
         f = open("high_score.txt")
         scores = map(lambda x: int(x.strip()), f.readlines())
         scores.sort(reverse=True)
-        print scores
+        scores = scores[:5]
         for score in scores:
             score = self.font.render(str(score), True, (0,0,0))
             self.screen.blit(score, self.score_pos)

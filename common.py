@@ -2,7 +2,8 @@ import os
 import pygame
 from pygame.locals import *
 
-def load_image(name, colorkey=None, alpha=False):
+
+def load_image(name, colorkey=None, alpha=False, scale=None):
     fullname = os.path.join('ui', name)
     try:
         image = pygame.image.load(fullname)
@@ -13,6 +14,9 @@ def load_image(name, colorkey=None, alpha=False):
         image = image.convert_alpha()
     else:
         image = image.convert()
+    if scale is not None:
+        rect = image.get_rect()
+        image = pygame.transform.scale(image, (int(rect.width * scale), int(rect.height * scale)))
     if colorkey is not None:
         if colorkey is -1:
             colorkey = image.get_at((0, 0))

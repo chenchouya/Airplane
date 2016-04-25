@@ -2,9 +2,6 @@
 # coding=utf-8
 
 from plane_init import *
-import threading
-
-
 
 screen = pygame.display.set_mode((480, 852), 0, 32)
 # 绘制屏幕
@@ -17,7 +14,7 @@ if music_icon:
 clock = pygame.time.Clock()
 while 1:
     # clock.tick(400)
-    # enemy_add_speed(enemy_group, score)
+    # enemy_add_speed(enemy1_group, score)
     interval_e -= 1
     interval_b -= 1
     screen.blit(background, (0, 0))

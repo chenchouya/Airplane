@@ -1,9 +1,4 @@
-import os
-import random
-import pygame
-from pygame.locals import *
 from common import *
-import constants
 
 MAXFPS = 500
 class Activity:
@@ -23,7 +18,9 @@ class Activity:
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT:
+                self.finished()
                 pygame.quit()
+
                 exit()
 
         return events
@@ -44,7 +41,7 @@ class Activity:
             if self.changed:
                 self.screen.blit(self.background, (0,0))
                 self.on_change()
-                pygame.display.flip()
+                pygame.display.update()
             self.changed = False
 
     def setup(self):
