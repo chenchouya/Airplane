@@ -12,10 +12,10 @@ from common import *
 class Plane(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.plane_down1_img = load_image(constants.my_plane_down1_fn, alpha=True, scale=0.7)[0]
-        self.plane_down2_img = load_image(constants.my_plane_down2_fn, alpha=True, scale=0.7)[0]
-        self.plane_down3_img = load_image(constants.my_plane_down3_fn, alpha=True, scale=0.7)[0]
-        self.plane_down4_img = load_image(constants.my_plane_down4_fn, alpha=True, scale=0.7)[0]
+        # self.plane_down1_img = load_image(constants.my_plane_down1_fn, alpha=True, scale=0.7)[0]
+        # self.plane_down2_img = load_image(constants.my_plane_down2_fn, alpha=True, scale=0.7)[0]
+        # self.plane_down3_img = load_image(constants.my_plane_down3_fn, alpha=True, scale=0.7)[0]
+        # self.plane_down4_img = load_image(constants.my_plane_down4_fn, alpha=True, scale=0.7)[0]
         self.screen = pygame.display.get_surface()
         self.life = 3
         self.restart()
