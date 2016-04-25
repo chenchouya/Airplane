@@ -1,5 +1,6 @@
 #coding=utf-8
 
+
 from activity import *
 class ScoreActivity(Activity):
 

@@ -6,8 +6,6 @@ from RestartActivity import *
 from ScoreActivity import *
 
 if __name__ == "__main__":
-    print USEREVENT
-    print NUMEVENTS
     pygame.init()
     # 初始化
 
