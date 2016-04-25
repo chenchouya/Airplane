@@ -32,10 +32,10 @@ enemy1_down2_fn = os.path.join("shoot", "enemy1_down2.png")
 enemy1_down3_fn = os.path.join("shoot", "enemy1_down3.png")
 enemy1_down4_fn = os.path.join("shoot", "enemy1_down4.png")
 # 敌机1爆炸效果
-my_plane_down1_fn = os.path.join("shoot", "hero_blowup_n1.png")
-my_plane_down2_fn = os.path.join("shoot", "hero_blowup_n2.png")
-my_plane_down3_fn = os.path.join("shoot", "hero_blowup_n3.png")
-my_plane_down4_fn = os.path.join("shoot", "hero_blowup_n4.png")
+# my_plane_down1_fn = os.path.join("shoot", "hero_blowup_n1.png")
+# my_plane_down2_fn = os.path.join("shoot", "hero_blowup_n2.png")
+# my_plane_down3_fn = os.path.join("shoot", "hero_blowup_n3.png")
+# my_plane_down4_fn = os.path.join("shoot", "hero_blowup_n4.png")
 
 enemy_explo_sound_fn = "enemy1_down.mp3"  # 敌机1爆炸音效
 plane_explo_sound_fn = "myplane_explode.wav"  # 我军飞机坠毁音效
