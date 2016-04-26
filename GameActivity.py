@@ -29,13 +29,16 @@ class GameActivity(Activity):
 
         self._life_count = 0
         self._bomb_count = 0
+        self._tick_count = 0
 
     def setup(self):
 
+        self.boss = Boss()
         self.allSprites = MyGroup()
         self.enemy1_group = pygame.sprite.RenderPlain()
         self.enemy2_group = pygame.sprite.RenderPlain()
         self.enemy3_group = pygame.sprite.RenderPlain()
+        self.boss_group = MyGroup()
         self.all_enemies = MyGroup()
         self.no_colli_group = MyGroup()
 
@@ -87,14 +90,14 @@ class GameActivity(Activity):
         Enemy.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
         Enemy.enemy_down3_pic = load_image(constants.enemy1_down3_fn, alpha=True)[0]
         Enemy.enemy_down4_pic = load_image(constants.enemy1_down4_fn, alpha=True)[0]
-        Enemy2.enemy_down1_pic = load_image(constants.enemy1_down1_fn, alpha=True)[0]
-        Enemy2.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
-        Enemy2.enemy_down3_pic = load_image(constants.enemy1_down3_fn, alpha=True)[0]
-        Enemy2.enemy_down4_pic = load_image(constants.enemy1_down4_fn, alpha=True)[0]
-        Enemy3.enemy_down1_pic = load_image(constants.enemy1_down1_fn, alpha=True)[0]
-        Enemy3.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
-        Enemy3.enemy_down3_pic = load_image(constants.enemy1_down3_fn, alpha=True)[0]
-        Enemy3.enemy_down4_pic = load_image(constants.enemy1_down4_fn, alpha=True)[0]
+        # Enemy2.enemy_down1_pic = load_image(constants.enemy1_down1_fn, alpha=True)[0]
+        # Enemy2.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
+        # Enemy2.enemy_down3_pic = load_image(constants.enemy1_down3_fn, alpha=True)[0]
+        # Enemy2.enemy_down4_pic = load_image(constants.enemy1_down4_fn, alpha=True)[0]
+        # Enemy3.enemy_down1_pic = load_image(constants.enemy1_down1_fn, alpha=True)[0]
+        # Enemy3.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
+        # Enemy3.enemy_down3_pic = load_image(constants.enemy1_down3_fn, alpha=True)[0]
+        # Enemy3.enemy_down4_pic = load_image(constants.enemy1_down4_fn, alpha=True)[0]
 
         pygame.mouse.set_visible(False)
 
@@ -107,6 +110,7 @@ class GameActivity(Activity):
         self.timer_ufo2.start()
         self.timer_e3 = threading.Timer(constants.enemy3_interval, self.enemy3_appear, ())
         self.timer_e3.start()
+
 
     def run(self):
         self.screen.blit(self.background, (0, 0))
@@ -151,8 +155,8 @@ class GameActivity(Activity):
             elif event.type == constants.ENEMY_APPEAR_EVENT:
                 if not self.pause:
                     if len(self.enemy1_group) <= self.max_enemy1:
-                        Enemy().add(self.enemy1_group, self.all_enemies, self.allSprites, self.no_colli_group)
-                    if random.randint(1, 10) > 6 and len(self.enemy2_group) <= self.max_enemy2:
+                        Enemy1().add(self.enemy1_group, self.all_enemies, self.allSprites, self.no_colli_group)
+                    if len(self.enemy2_group) <= self.max_enemy2:
                         Enemy2().add(self.enemy2_group, self.all_enemies, self.allSprites, self.no_colli_group)
                         self.enemy3_appear_sound.play()
 
@@ -177,7 +181,10 @@ class GameActivity(Activity):
 
             for enemy in pygame.sprite.groupcollide(self.all_enemies, self.bullet_group, 0, 1,
                                                     self.collide_mask).keys():
-                enemy.explode()
+                if enemy in self.boss_group:
+                    enemy.hurt()
+                else:
+                    enemy.explode()
                 self.short_boom_sound.play()
                 self.score += 100
 
@@ -192,7 +199,10 @@ class GameActivity(Activity):
                 if pygame.sprite.collide_mask(self.plane, e):
                     self.plane.explode()
                     for s in self.no_colli_group.sprites():
-                        s.kill()
+                        if s in self.boss_group:
+                            pass
+                        else:
+                            s.kill()
                     if len(self.plane_icon_group) > 0:
                         self.plane_icon_group.pop(0)
                     e.explode()
@@ -228,18 +238,27 @@ class GameActivity(Activity):
 
     def draw_spirites(self):
         if not self.pause:
-            for e in self.all_enemies.sprites():
-                if e.launch_bullet:
-                    EnemyBullet(e.rect.center).add(self.enemy_bullets, self.allSprites, \
-                                                   self.no_colli_group)
-                    e.launch_bullet = False
-                    self.bullet_sound.play()
+            self._tick_count += 1
+            if len(self.enemy_bullets) < 30 and self._tick_count % 100 == 0:
+                for e in self.all_enemies.sprites():
+                    if e.has_bullet_left():
+                        e.shoot_bullet()
+                        EnemyBullet(random.choice([e.rect.midbottom, e.rect.bottomleft, e.rect.bottomright]))\
+                            .add(self.enemy_bullets, self.allSprites, self.no_colli_group)
+                        self.bullet_sound.play()
 
             for e in self.enemy3_group.sprites():
                 e.get_player_pos(self.plane)
 
             self.allSprites.update()
             self.allSprites.draw(self.screen)
+
+            for boss in self.boss_group.sprites():
+                if boss.active:
+                    hp_color = constants.COLORS['green'] if boss.gethealthy() else constants.COLORS['red']
+                    endpos = (boss.rect.x + boss.rect.width * boss.get_energy_ratio(), boss.rect.y)
+                    pygame.draw.line(self.screen, hp_color, boss.rect.topleft, endpos, 8)
+
             for bomb_list in self.bomb_icon_group:
                 self.screen.blit(bomb_list.image, bomb_list.rect)
 
@@ -251,78 +270,83 @@ class GameActivity(Activity):
             self.screen.blit(text, (0, 0))
             pygame.display.update()
 
+    def add_boss(self):
+        self.boss.activate()
+        self.boss.add(self.boss_group, self.no_colli_group, self.allSprites, self.all_enemies)
+
     def change_level(self):
-        if self.score > 2000:
-            self.max_enemy1 = 5
-            self.max_enemy2 = 3
-            self.max_enemy3 = 1
-        elif self.score > 4000:
-            self.max_enemy1 = 6
+        if 0 <= self.score < 4000:
+            self.max_enemy1 = 3
+            self.max_enemy2 = 1
+            self.max_enemy3 = 0
+            constants.enemy3_chongci_dis = 500
+            self.add_boss()
+        elif 4000 < self.score < 10000:
+            self.max_enemy1 = 4
             self.max_enemy2 = 2
+            self.max_enemy3 = 1
+        elif 10000 < self.score < 20000:
+            self.max_enemy1 = 4
+            self.max_enemy2 = 3
             self.max_enemy3 = 2
-        elif self.score > 10000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 4
-            self.max_enemy3 = 3
+            self.add_boss()
             constants.enemy3_chongci_dis = 400
-        elif self.score > 20000:
+        elif 20000 < self.score < 30000:
             self.max_enemy1 = 2
-            self.max_enemy2 = 10
-            self.max_enemy3 = 3
-        elif self.score > 30000:
-            self.max_enemy1 = 8
             self.max_enemy2 = 8
-            self.max_enemy3 = 5
+            self.max_enemy3 = 3
+            self.add_boss()
+        elif 40000 > self.score > 30000:
+            self.max_enemy1 = 5
+            self.max_enemy2 = 8
+            self.max_enemy3 = 3
             constants.ufo1_interval = 23.0
             constants.ufo2_interval = 33.0
             constants.enemy3_interval = 5.0
             constants.enemy3_chongci_dis = 300
-        elif self.score > 40000:
+        elif 50000 > self.score > 40000:
             self.max_enemy1 = 5
             self.max_enemy2 = 10
             self.max_enemy3 = 7
-        elif self.score > 50000:
-            self.max_enemy1 = 2
+        elif 80000 > self.score > 50000:
+            self.max_enemy1 = 5
             self.max_enemy2 = 12
-            self.max_enemy3 = 10
+            self.max_enemy3 = 7
             constants.enemy3_chongci_dis = 250
-        elif self.score > 80000:
-            self.max_enemy1 = 10
+        elif 100000 > self.score > 80000:
+            self.max_enemy1 = 8
             self.max_enemy2 = 12
-            self.max_enemy3 = 10
+            self.max_enemy3 = 7
             constants.ufo1_interval = 30.0
             constants.ufo2_interval = 28.0
             constants.enemy3_interval = 3.0
             constants.enemy3_chongci_dis = 200
-        elif self.score > 100000:
+        elif 150000 > self.score > 100000:
             self.max_enemy1 = 10
             self.max_enemy2 = 15
-            self.max_enemy3 = 15
+            self.max_enemy3 = 7
             constants.ufo1_interval = 28.0
             constants.ufo2_interval = 40.0
             constants.enemy3_interval = 3.0
             constants.enemy3_chongci_dis = 180
-        elif self.score > 150000:
-            self.max_enemy1 = 20
-            self.max_enemy2 = 20
-            self.max_enemy3 = 20
+        elif 200000 > self.score > 150000:
+            self.max_enemy1 = 15
+            self.max_enemy2 = 10
+            self.max_enemy3 = 10
             constants.ufo1_interval = 40.0
             constants.ufo2_interval = 40.0
             constants.enemy3_interval = 2.0
             constants.enemy3_chongci_dis = 220
         elif self.score > 200000:
-            self.max_enemy1 = 40
-            self.max_enemy2 = 40
-            self.max_enemy3 = 40
+            self.max_enemy1 = 20
+            self.max_enemy2 = 15
+            self.max_enemy3 = 10
             constants.ufo1_interval = 40.0
             constants.ufo2_interval = 40.0
             constants.enemy3_interval = 1.0
-            constants.enemy3_chongci_dis = 220
+            constants.enemy3_chongci_dis = 200
         else:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 1
-            self.max_enemy3 = 3
-            constants.enemy3_chongci_dis = 500
+            pass
 
     def ufo1_appear(self):
         self.ufo1.active = True
@@ -343,12 +367,12 @@ class GameActivity(Activity):
             scores = f.readlines()
         scores = map(lambda x: int(x.strip()), scores)
 
-        if len(scores) > 0 and self.score > max(scores):
+        if len(scores) > 0 and self.score > max(scores) or len(scores) == 0:
             break_score = self.font.render("WOW,Break the score!", 1, (100, 100, 0))
             self.achievement_sound.play()
             self.screen.blit(break_score, (50, 300))
 
-        if len(scores) > 0 and self.score > min(scores):
+        if len(scores) > 0 and self.score > min(scores) or len(scores) == 0:
             scores.append(self.score)
             scores.sort(reverse=True)
             scores = scores[:10]

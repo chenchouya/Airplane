@@ -6,6 +6,7 @@ myplane_pic = os.path.join("shoot", "my_plane.png")
 enemy1_pic = os.path.join("shoot", "enemy1.png")
 enemy2_pic = os.path.join("shoot", "enemy3.png")
 enemy3_pic = os.path.join("shoot", "enemy3.png")
+boss_pic = os.path.join("shoot", "boss.jpg")
 ufo1_pic = os.path.join("shoot", "ufo1.png")
 ufo2_pic = os.path.join("shoot", "ufo2.png")
 bullet1_pic = os.path.join("shoot", "bullet1.png")
@@ -65,13 +66,16 @@ show_score_font_fn = r"wel_font.ttf"
 # interval
 ufo1_interval = 20.0
 ufo2_interval = 30.0
-enemy12_interval = 250  # ms
+enemy12_interval = 500 # ms
 enemy3_interval = 10.0
 bullet2_last = 10.0
 bullet3_last = 10.0
 
 # other
 enemy3_chongci_dis = 200
+boss_energy_max = 30
+
+COLORS = {'green': (0,255,0), 'red':(255,0,0), 'blue':(0, 0, 255)}
 #User define events
 WELCOME_SCREEN_EVENT = USEREVENT + 1
 SHOW_HELP_EVENT = USEREVENT + 2

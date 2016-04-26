@@ -92,38 +92,32 @@ class Plane(pygame.sprite.Sprite):
     def recover(self):
         self.stop = False
 
-
 class Enemy(pygame.sprite.Sprite):
-    """Enemy planes"""
+    enemy_down1_pic = None
+    enemy_down2_pic = None
+    enemy_down3_pic = None
+    enemy_down4_pic = None
+
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.speed = 3
-        self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
         screen = pygame.display.get_surface()
-        self.mask = pygame.mask.from_surface(self.image)
-        self.area = screen.get_rect()
+        if screen:
+            self.area = screen.get_rect()
         self.stop = False
-        self.acceleration = 0.2
-        self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
         self.bullet_store = 0
-        self.launch_bullet = False
+        self.bullet_launched = False
 
     def restart(self):
-        self.stop = False
-        self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
-        self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
+        pass
+
+    def has_bullet_left(self):
+        return self.bullet_store > 0
+
+    def shoot_bullet(self):
+        self.bullet_store -= 1
 
     def update(self):
-        if self.rect.bottom <= 650:
-            if not self.stop:
-                self.rect.y = round(self.rect.y + random.random())
-        else:
-            self.kill()
-
-    def accelerate(self):
-        self.speed += self.acceleration
+        pass
 
     def explode(self):
         self.stop = True
@@ -148,68 +142,89 @@ class Enemy(pygame.sprite.Sprite):
     def recover(self):
         self.stop = False
 
+class Enemy1(Enemy):
+    """Enemy planes"""
 
-# enemy plane with bullets
-class Enemy2(Enemy):
     def __init__(self):
         Enemy.__init__(self)
-        self.image, self.rect = load_image(constants.enemy2_pic, alpha=True, scale=0.6)
+        self.speed = 3
+        self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
         self.mask = pygame.mask.from_surface(self.image)
-        self.speed = 2
-        self.bullet_store = 1
-        self.launch_bullet = False
+        self.stop = False
+        self.acceleration = 0.2
+        self.rect.x = random.randint(20, 460)
+        self.rect.y = random.randint(-200, -50)
+        self.bullet_store = 0
+        self.bullet_launched = False
+
+    def restart(self):
+        self.stop = False
+        self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-200, -50)
 
     def update(self):
         if self.rect.bottom <= self.area.height:
             if not self.stop:
-                self.rect.y = round(self.rect.y + random.random())
-                if self.rect.y > 50 and self.bullet_store == 2:
-                    self.launch_bullet = True
-                    self.bullet_store -= 1
-                if self.rect.y > 150 and self.bullet_store == 1:
-                    self.launch_bullet = True
-                    self.bullet_store -= 1
+                self.rect.y += random.choice([0,1])
+        else:
+            self.kill()
+
+    def accelerate(self):
+        self.speed += self.acceleration
+
+# enemy plane with bullets
+class Enemy2(Enemy1):
+    def __init__(self):
+        Enemy1.__init__(self)
+        self.image, self.rect = load_image(constants.enemy2_pic, alpha=True, scale=0.6)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.speed = 2
+        self.bullet_store = 2
+        self.bullet_launched = False
+        self.rect.x = random.randint(20, 460)
+        self.rect.y = random.randint(-200, -50)
+
+    def update(self):
+        if self.rect.bottom <= self.area.height:
+            if not self.stop:
+                self.rect.y += random.choice([0,1])
         else:
             self.kill()
 
     def restart(self):
         self.stop = False
-        self.launch_bullet = False
+        self.bullet_launched = False
         self.image, self.rect = load_image(constants.enemy2_pic, alpha=True, scale=0.6)
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-200, -50)
 
-
 # enemy plane
-class Enemy3(Enemy):
+class Enemy3(Enemy1):
     def __init__(self):
-        Enemy.__init__(self)
+        Enemy1.__init__(self)
         self.image, self.rect = load_image(constants.enemy3_pic, alpha=True, scale=0.6)
         self.speed = 1
         self.h_speed = 1
         self.player_pos = []
         self.mask = pygame.mask.from_surface(self.image)
-        screen = pygame.display.get_surface()
-        self.area = screen.get_rect()
+        # screen = pygame.display.get_surface()
         self.stop = False
-        self.acceleration = 0.0025
+        self.acceleration = 0.0005
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-100, -50)
         self.launch_bullet = False
         self.bullet_store = 1
 
     def update(self):
-        self.accelerate()
-        if self.rect.bottom <= 650:
+
+        if self.rect.bottom <= self.area.height:
             if not self.stop:
-                if self.bullet_store > 0 and self.rect.y > 0:
-                    self.launch_bullet = True
-                    self.bullet_store -= 1
                 self.rect.y += self.speed
                 if self.player_pos[1] - self.rect.y < constants.enemy3_chongci_dis:
+                    self.accelerate()
                     self.rect.x += -self.h_speed if self.rect.x > self.player_pos[0] else self.h_speed
+                    # self.rect.x += random.choice([1,2.-1,-2])
         else:
             self.kill()
 
@@ -217,15 +232,87 @@ class Enemy3(Enemy):
         self.player_pos = plane.rect.center
 
     def accelerate(self):
-        if self.acceleration >= 0:
-            self.acceleration -= 0.0001
+        # if self.acceleration >= 0:
+        #     self.acceleration -= 0.0001
+        self.speed += self.acceleration
 
     def restart(self):
         self.stop = False
+        self.speed = 1
         self.image, self.rect = load_image(constants.enemy3_pic, alpha=True, scale=0.6)
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-200, -50)
 # 定义敌机类
+
+class Boss(Enemy):
+    def __init__(self):
+        Enemy.__init__(self)
+        self.image, self.rect = load_image(constants.boss_pic, colorkey=-1)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.restart()
+        self.h_speed = 1
+
+    def update(self):
+        if not self.stop and self.active:
+            if self._move2mid:
+                if self.rect.center[0] < self.area.width / 2:
+                    self.rect.x += random.choice([0,1])
+                elif self.rect.center[0] > self.area.width / 2:
+                    self.rect.x -= random.choice([0,1])
+                else: self._move2mid = False
+                # self.rect.x += self.h_speed if self.h_direction > 0 \
+                #     else random.choice(range(-self.h_speed, 1))
+                # if self.rect.center[0] > self.area.width / 2 + 100 or self.rect.center[0] \
+                #     < self.rect.width / 2 - 100:
+                #     self.h_direction = -self.h_direction
+
+    def launch_bullet(self):
+        self.bullet_launched = True
+
+    def bighurt(self):
+        print "energy:", self.energy
+        self.energy -= 5
+        if self.energy <= 0:
+            self.explode()
+
+    def hurt(self):
+        print "energy:", self.energy
+        self.energy -= 1
+        if self.energy <= 0:
+            self.explode()
+
+    def get_energy_ratio(self):
+        return self.energy * 1.0 / constants.boss_energy_max
+
+    def explode(self):
+        self.stop = True
+        self.active = False
+        thread.start_new_thread(self.explode_thread, ())
+
+    def gethealthy(self):
+        if self.energy < constants.boss_energy_max / 3:
+            return False
+        return True
+
+    def activate(self):
+        self.active = True
+        self.launch_bullet()
+
+    def activate_timer(self):
+        self.boss_bullet_timer = threading.Timer(100.0, self.launch_bullet, ())
+        self.boss_bullet_timer.start()
+
+    def restart(self):
+        self.image, self.rect = load_image(constants.boss_pic, colorkey=-1)
+        self.bullet_store = 2000
+        self.bullet_launched = False
+        self.energy = constants.boss_energy_max
+        self.active = False
+        self.stop = False
+        self._move2mid = True
+        self.h_direction = 1
+        self.rect.y = 20
+        self.rect.x = random.choice([-500, self.area.width + 500])
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self):
@@ -373,7 +460,9 @@ class Bomb(pygame.sprite.Sprite):
         self.rect.center = self.raw_rect.center
         self.stop = True
         enemies.suspend()
-        pygame.sprite.spritecollide(self, enemies, dokill=True, collided=self.collide_detect)
+        for e in pygame.sprite.spritecollide(self, enemies, dokill=False, collided=self.collide_detect):
+            if not isinstance(e, Boss):
+                e.kill()
         enemies.recover()
         timer = threading.Timer(0.8, self.finish, ())
         timer.start()
