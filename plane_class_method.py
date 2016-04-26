@@ -151,27 +151,24 @@ class Enemy1(Enemy):
 
     def __init__(self):
         Enemy.__init__(self)
-        self.speed = 3
-        self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
-        self.mask = pygame.mask.from_surface(self.image)
-        self.stop = False
+        self.speed = 1
         self.acceleration = 0.2
-        self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
-        self.bullet_store = 0
-        self.bullet_launched = False
+        self.restart()
 
     def restart(self):
+        self.bullet_store = 0
+        self.bullet_launched = False
         self.stop = False
         self.active = False
         self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
+        self.rect.y = random.randint(-800, -50)
 
     def update(self):
         if self.rect.bottom <= self.area.height:
             if not self.stop and self.active:
-                self.rect.y += random.choice([0,1])
+                self.rect.y += self.speed
         else:
             self.kill()
 
@@ -182,13 +179,8 @@ class Enemy1(Enemy):
 class Enemy2(Enemy1):
     def __init__(self):
         Enemy1.__init__(self)
-        self.image, self.rect = load_image(constants.enemy2_pic, alpha=True, scale=0.6)
-        self.mask = pygame.mask.from_surface(self.image)
         self.speed = 2
-        self.bullet_store = 2
-        self.bullet_launched = False
-        self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
+        self.restart()
 
     def update(self):
         if self.rect.bottom <= self.area.height:
@@ -201,9 +193,11 @@ class Enemy2(Enemy1):
         self.stop = False
         self.active = False
         self.bullet_launched = False
+        self.bullet_store = 2
         self.image, self.rect = load_image(constants.enemy2_pic, alpha=True, scale=0.6)
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
+        self.rect.y = random.randint(-800, -50)
 
 # enemy plane
 class Enemy3(Enemy1):
@@ -212,7 +206,6 @@ class Enemy3(Enemy1):
         self.h_speed = 1
         self.player_pos = []
         self.acceleration = 0.0005
-        self.launch_bullet = False
         self.restart()
 
     def update(self):
@@ -238,12 +231,13 @@ class Enemy3(Enemy1):
     def restart(self):
         self.stop = False
         self.active = False
+        self.bullet_launched = False
         self.bullet_store = 1
         self.speed = 1
         self.image, self.rect = load_image(constants.enemy3_pic, alpha=True, scale=0.6)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-500, -50)
+        self.rect.y = random.randint(-800, -50)
 # 定义敌机类
 
 class Boss(Enemy):

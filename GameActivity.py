@@ -283,33 +283,33 @@ class GameActivity(Activity):
         self.check_bomb_add()
         self.check_boss_add()
         if 0 <= self.score < 4000:
-            self.max_enemy1 = 3
+            self.max_enemy1 = 8
             self.max_enemy2 = 1
             self.max_enemy3 = 0
             constants.enemy3_chongci_dis = 500
         elif 4000 < self.score < 10000:
-            self.max_enemy1 = 4
-            self.max_enemy2 = 2
+            self.max_enemy1 = 8
+            self.max_enemy2 = 4
             self.max_enemy3 = 1
-        elif 10000 < self.score < 20000:
-            self.max_enemy1 = 4
-            self.max_enemy2 = 3
+        elif 10000 < self.score < 18000:
+            self.max_enemy1 = 8
+            self.max_enemy2 = 5
             self.max_enemy3 = 2
             constants.enemy3_chongci_dis = 400
-        elif 20000 < self.score < 30000:
-            self.max_enemy1 = 2
+        elif 18000 < self.score < 28000:
+            self.max_enemy1 = 6
             self.max_enemy2 = 8
             self.max_enemy3 = 3
-        elif 40000 > self.score > 30000:
-            self.max_enemy1 = 5
-            self.max_enemy2 = 8
+        elif 40000 > self.score > 28000:
+            self.max_enemy1 = 8
+            self.max_enemy2 = 10
             self.max_enemy3 = 3
             constants.ufo1_interval = 23.0
             constants.ufo2_interval = 33.0
             constants.enemy3_interval = 5.0
             constants.enemy3_chongci_dis = 300
         elif 50000 > self.score > 40000:
-            self.max_enemy1 = 5
+            self.max_enemy1 = 8
             self.max_enemy2 = 10
             self.max_enemy3 = 7
         elif 80000 > self.score > 50000:
@@ -364,7 +364,6 @@ class GameActivity(Activity):
         if len(self.enemy3_group) <= self.max_enemy3:
             Enemy3().add(self.enemy3_group, self.all_enemies, self.allSprites, self.no_colli_group)
         for e in self.enemy3_group:
-            print type(e)
             if not e.active:
                 e.activate()
                 break
