@@ -4,7 +4,7 @@ from plane_class_method import *
 
 
 class GameActivity(Activity):
-    MAXFPS = 200
+    MAXFPS = 30
 
     def __init__(self, screen, background_fn):
         Activity.__init__(self, screen, background_fn)
@@ -188,9 +188,14 @@ class GameActivity(Activity):
                 if enemy in self.boss_group:
                     enemy.hurt()
                 else:
+                    if enemy in self.enemy1_group:
+                        self.score += 100
+                    elif enemy in self.enemy2_group:
+                        self.score += 300
+                    elif enemy in self.enemy3_group:
+                        self.score += 500
                     enemy.explode()
                 self.short_boom_sound.play()
-                self.score += 100
 
             for bomb, enemies in pygame.sprite.groupcollide(self.bomb_group, self.all_enemies, 0, 0,
                                                             self.collide_mask).items():
@@ -243,7 +248,7 @@ class GameActivity(Activity):
     def draw_spirites(self):
         if not self.pause:
             self._tick_count += 1
-            if len(self.enemy_bullets) < 30 and self._tick_count % 100 == 0:
+            if len(self.enemy_bullets) < 30 and self._tick_count % 300 == 0:
                 for e in self.all_enemies.sprites():
                     if e.has_bullet_left():
                         e.shoot_bullet()
@@ -289,13 +294,13 @@ class GameActivity(Activity):
         elif 4000 < self.score < 10000:
             self.max_enemy1 = 5
             self.max_enemy2 = 2
-            self.max_enemy3 = 1
+            self.max_enemy3 = 0
         elif 10000 < self.score < 18000:
             self.max_enemy1 = 2
             self.max_enemy2 = 0
-            self.max_enemy3 = 3
+            self.max_enemy3 = 2
             constants.enemy3_team = 2
-            constants.enemy3_interval = 2.0
+            constants.enemy3_interval = 3.0
             constants.enemy3_chongci_dis = 400
         elif 18000 < self.score < 28000:
             self.max_enemy1 = 6
@@ -311,53 +316,53 @@ class GameActivity(Activity):
             constants.ufo2_interval = 33.0
             constants.enemy3_chongci_dis = 300
             constants.enemy3_interval = 1.0
-            constants.enemy3_team = 3
+            constants.enemy3_team = 2
         elif 50000 > self.score > 40000:
             self.max_enemy1 = 2
-            self.max_enemy2 = 20
+            self.max_enemy2 = 10
             self.max_enemy3 = 0
             constants.enemy3_interval = 5.0
         elif 80000 > self.score > 50000:
-            self.max_enemy1 = 5
-            self.max_enemy2 = 10
-            self.max_enemy3 = 7
-            constants.enemy3_team = 4
+            self.max_enemy1 = 0
+            self.max_enemy2 = 8
+            self.max_enemy3 = 3
+            constants.enemy3_team = 3
             constants.enemy3_chongci_dis = 250
             constants.enemy3_interval = 1.0
         elif 100000 > self.score > 80000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 12
-            self.max_enemy3 = 7
-            constants.enemy3_team = 3
+            self.max_enemy1 = 5
+            self.max_enemy2 = 0
+            self.max_enemy3 = 4
+            constants.enemy3_team = 4
             constants.ufo1_interval = 30.0
             constants.ufo2_interval = 28.0
             constants.enemy3_interval = 2.0
-            constants.enemy3_chongci_dis = 200
+            constants.enemy3_chongci_dis = 350
         elif 150000 > self.score > 100000:
-            self.max_enemy1 = 10
-            self.max_enemy2 = 15
-            self.max_enemy3 = 7
-            constants.enemy3_team = 2
+            self.max_enemy1 = 20
+            self.max_enemy2 = 0
+            self.max_enemy3 = 0
             constants.ufo1_interval = 28.0
             constants.ufo2_interval = 20.0
             constants.enemy3_interval = 3.0
             constants.enemy3_chongci_dis = 180
         elif 200000 > self.score > 150000:
-            self.max_enemy1 = 15
-            self.max_enemy2 = 10
-            self.max_enemy3 = 10
+            self.max_enemy1 = 5
+            self.max_enemy2 = 5
+            self.max_enemy3 = 5
             constants.enemy3_team = 5
             constants.ufo1_interval = 25.0
             constants.ufo2_interval = 28.0
             constants.enemy3_interval = 2.0
-            constants.enemy3_chongci_dis = 220
+            constants.enemy3_chongci_dis = 300
         elif self.score > 200000:
-            self.max_enemy1 = 0
-            self.max_enemy2 = 0
-            self.max_enemy3 = 15
+            self.max_enemy1 = 15
+            self.max_enemy2 = 15
+            self.max_enemy3 = 3
+            constants.enemy3_team = 2
             constants.ufo1_interval = 40.0
             constants.ufo2_interval = 40.0
-            constants.enemy3_interval = 0.5
+            constants.enemy3_interval = 1
             constants.enemy3_chongci_dis = 200
         else:
             pass

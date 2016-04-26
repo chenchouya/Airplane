@@ -168,7 +168,7 @@ class Enemy1(Enemy):
     def update(self):
         if self.rect.bottom <= self.area.height:
             if not self.stop and self.active:
-                self.rect.y += self.speed
+                self.rect.y += random.choice([0,1])
         else:
             self.kill()
 
@@ -205,7 +205,7 @@ class Enemy3(Enemy1):
         Enemy1.__init__(self)
         self.h_speed = 1
         self.player_pos = []
-        self.acceleration = 0.0005
+        self.acceleration = 0.00005
         self.restart()
 
     def update(self):
@@ -266,7 +266,6 @@ class Boss(Enemy):
         self.bullet_launched = True
 
     def bighurt(self):
-        print "energy:", self.energy
         self.energy -= 5
         if self.energy <= 0:
             self.explode()
