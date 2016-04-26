@@ -155,15 +155,15 @@ class GameActivity(Activity):
                 if not self.pause:
                     if len(self.enemy1_group) <= self.max_enemy1:
                         Enemy1().add(self.enemy1_group, self.all_enemies, self.allSprites, self.no_colli_group)
-                        for e in self.enemy1_group.sprites():
-                            if not e.active:
-                                e.activate()
+                    for e in self.enemy1_group.sprites():
+                        if not e.active:
+                            e.activate()
                     if len(self.enemy2_group) <= self.max_enemy2:
                         Enemy2().add(self.enemy2_group, self.all_enemies, self.allSprites, self.no_colli_group)
-                        for e in self.enemy2_group.sprites():
-                            if not e.active:
-                                e.activate()
                         self.enemy_appear_sound.play()
+                    for e in self.enemy2_group.sprites():
+                        if not e.active:
+                            e.activate()
 
             elif event.type == constants.BULLET_SHOOT_EVENT:
                 if not self.pause:
