@@ -460,7 +460,7 @@ class Bomb(pygame.sprite.Sprite):
             if not isinstance(e, Boss):
                 e.kill()
         enemies.recover()
-        timer = threading.Timer(0.8, self.finish, ())
+        timer = threading.Timer(0.5, self.finish, ())
         timer.start()
 
     @staticmethod

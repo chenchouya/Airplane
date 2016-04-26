@@ -112,7 +112,6 @@ class GameActivity(Activity):
         self.timer_e3 = threading.Timer(constants.enemy3_interval, self.enemy3_appear, ())
         self.timer_e3.start()
 
-
     def run(self):
         self.screen.blit(self.background, (0, 0))
         self.setup()
@@ -283,71 +282,82 @@ class GameActivity(Activity):
         self.check_bomb_add()
         self.check_boss_add()
         if 0 <= self.score < 4000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 1
+            self.max_enemy1 = 5
+            self.max_enemy2 = 0
             self.max_enemy3 = 0
             constants.enemy3_chongci_dis = 500
         elif 4000 < self.score < 10000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 4
+            self.max_enemy1 = 5
+            self.max_enemy2 = 2
             self.max_enemy3 = 1
         elif 10000 < self.score < 18000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 5
-            self.max_enemy3 = 2
+            self.max_enemy1 = 2
+            self.max_enemy2 = 0
+            self.max_enemy3 = 3
+            constants.enemy3_team = 2
+            constants.enemy3_interval = 2.0
             constants.enemy3_chongci_dis = 400
         elif 18000 < self.score < 28000:
             self.max_enemy1 = 6
-            self.max_enemy2 = 8
+            self.max_enemy2 = 5
             self.max_enemy3 = 3
+            constants.enemy3_team = 2
+            constants.enemy3_interval = 3.0
         elif 40000 > self.score > 28000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 10
-            self.max_enemy3 = 3
+            self.max_enemy1 = 2
+            self.max_enemy2 = 1
+            self.max_enemy3 = 4
             constants.ufo1_interval = 23.0
             constants.ufo2_interval = 33.0
-            constants.enemy3_interval = 5.0
             constants.enemy3_chongci_dis = 300
+            constants.enemy3_interval = 1.0
+            constants.enemy3_team = 3
         elif 50000 > self.score > 40000:
-            self.max_enemy1 = 8
-            self.max_enemy2 = 10
-            self.max_enemy3 = 7
+            self.max_enemy1 = 2
+            self.max_enemy2 = 20
+            self.max_enemy3 = 0
+            constants.enemy3_interval = 5.0
         elif 80000 > self.score > 50000:
             self.max_enemy1 = 5
-            self.max_enemy2 = 12
+            self.max_enemy2 = 10
             self.max_enemy3 = 7
+            constants.enemy3_team = 4
             constants.enemy3_chongci_dis = 250
+            constants.enemy3_interval = 1.0
         elif 100000 > self.score > 80000:
             self.max_enemy1 = 8
             self.max_enemy2 = 12
             self.max_enemy3 = 7
+            constants.enemy3_team = 3
             constants.ufo1_interval = 30.0
             constants.ufo2_interval = 28.0
-            constants.enemy3_interval = 3.0
+            constants.enemy3_interval = 2.0
             constants.enemy3_chongci_dis = 200
         elif 150000 > self.score > 100000:
             self.max_enemy1 = 10
             self.max_enemy2 = 15
             self.max_enemy3 = 7
+            constants.enemy3_team = 2
             constants.ufo1_interval = 28.0
-            constants.ufo2_interval = 40.0
+            constants.ufo2_interval = 20.0
             constants.enemy3_interval = 3.0
             constants.enemy3_chongci_dis = 180
         elif 200000 > self.score > 150000:
             self.max_enemy1 = 15
             self.max_enemy2 = 10
             self.max_enemy3 = 10
-            constants.ufo1_interval = 40.0
-            constants.ufo2_interval = 40.0
+            constants.enemy3_team = 5
+            constants.ufo1_interval = 25.0
+            constants.ufo2_interval = 28.0
             constants.enemy3_interval = 2.0
             constants.enemy3_chongci_dis = 220
         elif self.score > 200000:
-            self.max_enemy1 = 20
-            self.max_enemy2 = 15
-            self.max_enemy3 = 10
+            self.max_enemy1 = 0
+            self.max_enemy2 = 0
+            self.max_enemy3 = 15
             constants.ufo1_interval = 40.0
             constants.ufo2_interval = 40.0
-            constants.enemy3_interval = 1.0
+            constants.enemy3_interval = 0.5
             constants.enemy3_chongci_dis = 200
         else:
             pass
@@ -361,12 +371,17 @@ class GameActivity(Activity):
         threading.Timer(constants.ufo2_interval, self.ufo2_appear, ()).start()
 
     def enemy3_appear(self):
-        if len(self.enemy3_group) <= self.max_enemy3:
-            Enemy3().add(self.enemy3_group, self.all_enemies, self.allSprites, self.no_colli_group)
+        cnt = 0
+        for _ in range(0, constants.enemy3_team):
+            if len(self.enemy3_group) <= self.max_enemy3:
+                Enemy3().add(self.enemy3_group, self.all_enemies, self.allSprites, self.no_colli_group)
+                cnt += 1
         for e in self.enemy3_group:
+            if cnt >= constants.enemy3_team:
+                break
             if not e.active:
                 e.activate()
-                break
+                cnt += 1
         threading.Timer(constants.enemy3_interval, self.enemy3_appear, ()).start()
 
     def update_highscore(self):

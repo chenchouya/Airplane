@@ -1,4 +1,5 @@
 import os
+import sys
 import pygame
 from pygame.locals import *
 
@@ -23,6 +24,7 @@ def load_image(name, colorkey=None, alpha=False, scale=None):
     except pygame.error, message:
         print 'Cannot load image:', name
         print 'pygame error', pygame.error
+        sys.exit()
         raise SystemExit, message
 
 

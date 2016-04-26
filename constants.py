@@ -41,7 +41,7 @@ enemy1_down4_fn = os.path.join("shoot", "enemy1_down4.png")
 enemy_explo_sound_fn = "enemy1_down.mp3"  # 敌机1爆炸音效
 plane_explo_sound_fn = "myplane_explode.wav"  # 我军飞机坠毁音效
 achievement_sound_fn = "achievement_sound.mp3"  # 打破记录时的音效
-game_bgm_fn = "IAM.wav"
+game_bgm_fn = "pupplets.wav"
 takeoff_sound_fn = "波音747.wav"
 enemy3_appear_sound_fn = "波音747.wav"
 launch_bomb_sound_fn = "daodan.wav"
@@ -66,8 +66,9 @@ show_score_font_fn = r"wel_font.ttf"
 # interval
 ufo1_interval = 20.0
 ufo2_interval = 30.0
-enemy12_interval = 200 # ms
+enemy12_interval = 500 # ms
 enemy3_interval = 5.0 #s
+enemy3_team = 1
 bullet2_last = 10.0
 bullet3_last = 10.0
 
