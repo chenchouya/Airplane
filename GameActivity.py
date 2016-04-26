@@ -19,7 +19,7 @@ class GameActivity(Activity):
         self.launch_bomb_sound = load_sound(constants.launch_bomb_sound_fn)
         self.baozou_sound = load_sound(constants.plane_thrash_sound_fn)
         self.plane_explode_sound = load_sound(constants.plane_explo_sound_fn)
-        self.enemy3_appear_sound = load_sound(constants.enemy3_appear_sound_fn)
+        self.enemy_appear_sound = load_sound(constants.enemy3_appear_sound_fn)
 
         # font
         self.font = load_font(constants.font_fn, constants.font_size)
@@ -85,7 +85,7 @@ class GameActivity(Activity):
         self.bullet_sound.set_volume(0.2)
         self.great_boom_sound.set_volume(0.2)
         self.short_boom_sound.set_volume(0.2)
-        self.enemy3_appear_sound.set_volume(0.2)
+        self.enemy_appear_sound.set_volume(0.2)
 
         Enemy.enemy_down1_pic = load_image(constants.enemy1_down1_fn, alpha=True)[0]
         Enemy.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
@@ -155,9 +155,15 @@ class GameActivity(Activity):
                 if not self.pause:
                     if len(self.enemy1_group) <= self.max_enemy1:
                         Enemy1().add(self.enemy1_group, self.all_enemies, self.allSprites, self.no_colli_group)
+                        for e in self.enemy1_group.sprites():
+                            if not e.active:
+                                e.activate()
                     if len(self.enemy2_group) <= self.max_enemy2:
                         Enemy2().add(self.enemy2_group, self.all_enemies, self.allSprites, self.no_colli_group)
-                        self.enemy3_appear_sound.play()
+                        for e in self.enemy2_group.sprites():
+                            if not e.active:
+                                e.activate()
+                        self.enemy_appear_sound.play()
 
             elif event.type == constants.BULLET_SHOOT_EVENT:
                 if not self.pause:
@@ -249,8 +255,11 @@ class GameActivity(Activity):
             for e in self.enemy3_group.sprites():
                 e.get_player_pos(self.plane)
 
-            self.allSprites.update()
-            self.allSprites.draw(self.screen)
+            try:
+                self.allSprites.update()
+                self.allSprites.draw(self.screen)
+            except:
+                pass
 
             for boss in self.boss_group.sprites():
                 if boss.active:
@@ -354,6 +363,11 @@ class GameActivity(Activity):
     def enemy3_appear(self):
         if len(self.enemy3_group) <= self.max_enemy3:
             Enemy3().add(self.enemy3_group, self.all_enemies, self.allSprites, self.no_colli_group)
+        for e in self.enemy3_group:
+            print type(e)
+            if not e.active:
+                e.activate()
+                break
         threading.Timer(constants.enemy3_interval, self.enemy3_appear, ()).start()
 
     def update_highscore(self):

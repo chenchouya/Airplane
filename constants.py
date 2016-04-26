@@ -66,8 +66,8 @@ show_score_font_fn = r"wel_font.ttf"
 # interval
 ufo1_interval = 20.0
 ufo2_interval = 30.0
-enemy12_interval = 500 # ms
-enemy3_interval = 10.0
+enemy12_interval = 200 # ms
+enemy3_interval = 5.0 #s
 bullet2_last = 10.0
 bullet3_last = 10.0
 

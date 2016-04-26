@@ -106,6 +106,10 @@ class Enemy(pygame.sprite.Sprite):
         self.stop = False
         self.bullet_store = 0
         self.bullet_launched = False
+        self.active = False
+
+    def activate(self):
+        self.active = True
 
     def restart(self):
         pass
@@ -159,13 +163,14 @@ class Enemy1(Enemy):
 
     def restart(self):
         self.stop = False
+        self.active = False
         self.image, self.rect = load_image(constants.enemy1_pic, alpha=True)
         self.rect.x = random.randint(20, 460)
         self.rect.y = random.randint(-200, -50)
 
     def update(self):
         if self.rect.bottom <= self.area.height:
-            if not self.stop:
+            if not self.stop and self.active:
                 self.rect.y += random.choice([0,1])
         else:
             self.kill()
@@ -187,13 +192,14 @@ class Enemy2(Enemy1):
 
     def update(self):
         if self.rect.bottom <= self.area.height:
-            if not self.stop:
+            if not self.stop and self.active:
                 self.rect.y += random.choice([0,1])
         else:
             self.kill()
 
     def restart(self):
         self.stop = False
+        self.active = False
         self.bullet_launched = False
         self.image, self.rect = load_image(constants.enemy2_pic, alpha=True, scale=0.6)
         self.rect.x = random.randint(20, 460)
@@ -203,23 +209,16 @@ class Enemy2(Enemy1):
 class Enemy3(Enemy1):
     def __init__(self):
         Enemy1.__init__(self)
-        self.image, self.rect = load_image(constants.enemy3_pic, alpha=True, scale=0.6)
-        self.speed = 1
         self.h_speed = 1
         self.player_pos = []
-        self.mask = pygame.mask.from_surface(self.image)
-        # screen = pygame.display.get_surface()
-        self.stop = False
         self.acceleration = 0.0005
-        self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-100, -50)
         self.launch_bullet = False
-        self.bullet_store = 1
+        self.restart()
 
     def update(self):
 
         if self.rect.bottom <= self.area.height:
-            if not self.stop:
+            if not self.stop and self.active:
                 self.rect.y += self.speed
                 if self.player_pos[1] - self.rect.y < constants.enemy3_chongci_dis:
                     self.accelerate()
@@ -238,10 +237,13 @@ class Enemy3(Enemy1):
 
     def restart(self):
         self.stop = False
+        self.active = False
+        self.bullet_store = 1
         self.speed = 1
         self.image, self.rect = load_image(constants.enemy3_pic, alpha=True, scale=0.6)
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = random.randint(20, 460)
-        self.rect.y = random.randint(-200, -50)
+        self.rect.y = random.randint(-500, -50)
 # 定义敌机类
 
 class Boss(Enemy):
