@@ -30,6 +30,7 @@ class GameActivity(Activity):
         self._life_count = 0
         self._bomb_count = 0
         self._tick_count = 0
+        self._boss_count = 0
 
     def setup(self):
 
@@ -80,11 +81,11 @@ class GameActivity(Activity):
         self.gameover = False
 
         # set volume
-        self.game_bgm.set_volume(0.8)
+        self.game_bgm.set_volume(1.0)
         self.bullet_sound.set_volume(0.2)
-        self.great_boom_sound.set_volume(0.5)
-        self.short_boom_sound.set_volume(0.5)
-        self.enemy3_appear_sound.set_volume(1.0)
+        self.great_boom_sound.set_volume(0.2)
+        self.short_boom_sound.set_volume(0.2)
+        self.enemy3_appear_sound.set_volume(0.2)
 
         Enemy.enemy_down1_pic = load_image(constants.enemy1_down1_fn, alpha=True)[0]
         Enemy.enemy_down2_pic = load_image(constants.enemy1_down2_fn, alpha=True)[0]
@@ -123,8 +124,6 @@ class GameActivity(Activity):
             self.clock.tick(MAXFPS)
             self.handle_events()
             self.detect_collision()
-            self.check_life_add()
-            self.check_bomb_add()
             self.draw_spirites()
             if self.quit:
                 self.finished()
@@ -270,17 +269,15 @@ class GameActivity(Activity):
             self.screen.blit(text, (0, 0))
             pygame.display.update()
 
-    def add_boss(self):
-        self.boss.activate()
-        self.boss.add(self.boss_group, self.no_colli_group, self.allSprites, self.all_enemies)
-
     def change_level(self):
+        self.check_life_add()
+        self.check_bomb_add()
+        self.check_boss_add()
         if 0 <= self.score < 4000:
             self.max_enemy1 = 3
             self.max_enemy2 = 1
             self.max_enemy3 = 0
             constants.enemy3_chongci_dis = 500
-            self.add_boss()
         elif 4000 < self.score < 10000:
             self.max_enemy1 = 4
             self.max_enemy2 = 2
@@ -289,13 +286,11 @@ class GameActivity(Activity):
             self.max_enemy1 = 4
             self.max_enemy2 = 3
             self.max_enemy3 = 2
-            self.add_boss()
             constants.enemy3_chongci_dis = 400
         elif 20000 < self.score < 30000:
             self.max_enemy1 = 2
             self.max_enemy2 = 8
             self.max_enemy3 = 3
-            self.add_boss()
         elif 40000 > self.score > 30000:
             self.max_enemy1 = 5
             self.max_enemy2 = 8
@@ -398,6 +393,15 @@ class GameActivity(Activity):
         self.timer_e3.cancel()
         pygame.event.set_blocked([constants.ENEMY_APPEAR_EVENT, constants.BULLET_SHOOT_EVENT])
         pygame.event.post(pygame.event.Event(constants.RESTART_EVENT))
+
+    def check_boss_add(self):
+        if self.score / 30000 > self._boss_count:
+            self.add_boss()
+            self._boss_count = self.score / 30000
+
+    def add_boss(self):
+        self.boss.activate()
+        self.boss.add(self.boss_group, self.no_colli_group, self.allSprites, self.all_enemies)
 
     def check_life_add(self):
 
