@@ -24,10 +24,14 @@ class MainActivity(Activity):
         self.screen.blit(self.background, (0, 0))
         self.setup()
         # 画背景
-        self.screen.blit(self.game_begin, self.game_begin.get_rect(x=500, y=50))
-        self.screen.blit(self.game_score, self.game_score.get_rect(x=540, y=100))
-        self.screen.blit(self.game_help, self.game_help.get_rect(x=580, y=150))
-        self.screen.blit(self.game_quit, self.game_quit.get_rect(x=620, y=200))
+        pos_x = constants.wel_window_size[0] / 2 + 20
+        # x_itv = (constants.wel_window_size[0] - self.game_quit.get_rect().width - pos_x - 92) / 3
+        # print "x_itv:", x_itv
+        pos_y = 50
+        self.screen.blit(self.game_begin, self.game_begin.get_rect(x=pos_x, y=pos_y))
+        self.screen.blit(self.game_score, self.game_score.get_rect(x=pos_x+40, y=pos_y+50))
+        self.screen.blit(self.game_help, self.game_help.get_rect(x=pos_x+80, y=pos_y+100))
+        self.screen.blit(self.game_quit, self.game_quit.get_rect(x=pos_x+120, y=pos_y+150))
         # self.screen.blit(self.game_music, self.game_music.get_rect(x=660, y=250))
         # 画出四个选项
         # self.screen.blit(self.sound_play_icon, (810, 250))

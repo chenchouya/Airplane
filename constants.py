@@ -71,6 +71,9 @@ enemy3_interval = 5.0 #s
 bullet2_last = 10.0
 bullet3_last = 10.0
 
+#size
+wel_window_size = (960, 600)
+game_window_size = (480, 840)
 # other
 enemy3_chongci_dis = 200
 boss_energy_max = 30
