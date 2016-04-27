@@ -14,6 +14,7 @@ bullet2_pic = os.path.join("shoot", "bullet2.png")
 bullet3_pic = os.path.join("shoot", "bullet1.png")
 boom_pic = os.path.join("shoot", "boom.jpg")
 bomb_pic = os.path.join("shoot", "bomb.png")
+bubble_pic = os.path.join("shoot", "colorbubble.png")
 
 main_background_fn = os.path.join("shoot_background", "bg_begin.jpg")
 game_background_fn = os.path.join('shoot_background', 'bg00.jpg')
@@ -55,11 +56,11 @@ great_boom_sound_fn = "boom_big.wav"
 font_fn = r"wel_font.ttf"
 font_size = 35
 
+# 欢迎界面字体
 wel_font_fn = r"wel_font.ttf"
 wel_font_size = 50
 
 show_score_font_fn = r"wel_font.ttf"
-# 欢迎界面字体
 
 
 
@@ -71,13 +72,15 @@ enemy3_interval = 5.0 #s
 enemy3_team = 1
 bullet2_last = 10.0
 bullet3_last = 10.0
+bubble_interval = 22.0
+bubble_last = 7
 
 #size
 wel_window_size = (960, 600)
 game_window_size = (480, 840)
 # other
 enemy3_chongci_dis = 200
-boss_energy_max = 30
+boss_energy_max = 60
 
 COLORS = {'green': (0,255,0), 'red':(255,0,0), 'blue':(0, 0, 255)}
 #User define events

@@ -10,6 +10,7 @@ from common import *
 
 # 定义我机
 class Plane(pygame.sprite.Sprite):
+
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         # self.plane_down1_img = load_image(constants.my_plane_down1_fn, alpha=True, scale=0.7)[0]
@@ -19,6 +20,13 @@ class Plane(pygame.sprite.Sprite):
         self.screen = pygame.display.get_surface()
         self.life = 3
         self.restart()
+
+    def enable_shield(self):
+        self.invincible = True
+
+    def disable_shield(self, bubble):
+        self.invincible = False
+        bubble.restart()
 
     def explode(self):
         self.life -= 1
@@ -66,6 +74,7 @@ class Plane(pygame.sprite.Sprite):
 
     def restart(self):
         self.stop = False
+        self.invincible = False
         self.image, self.rect = load_image(constants.myplane_pic, alpha=True)
         self.image = pygame.transform.scale \
             (self.image, (self.rect.width / 2, self.rect.height / 2))
@@ -271,7 +280,6 @@ class Boss(Enemy):
             self.explode()
 
     def hurt(self):
-        print "energy:", self.energy
         self.energy -= 1
         if self.energy <= 0:
             self.explode()
@@ -503,7 +511,6 @@ class UFO(pygame.sprite.Sprite):
     def recover(self):
         self.stop = False
 
-
 class UFO1(UFO):
     def __init__(self):
         UFO.__init__(self)
@@ -532,7 +539,6 @@ class UFO1(UFO):
         self.rect.y = random.randint(-150, -120)
         self.direction = True if (self.rect.x < self.area.width / 2) else False
 
-
 class UFO2(UFO):
     def __init__(self):
         UFO.__init__(self)
@@ -560,6 +566,47 @@ class UFO2(UFO):
         self.rect.x = random.randint(self.area.width / 2 - 40, self.area.width / 2 + 40)
         self.rect.y = random.randint(-150, -120)
         self.direction = True if (self.rect.x < self.area.width / 2) else False
+
+class floatBubble(UFO2):
+    def __init__(self):
+        UFO2.__init__(self)
+        self.image, self.rect = load_image(constants.bubble_pic, alpha=True, scale=0.3)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.restart()
+
+    def restart(self):
+        self.active = False
+        self.rect.x = random.randint(self.area.width / 2 - 40, self.area.width / 2 + 40)
+        self.rect.y = random.randint(-150, -120)
+        self.direction = True if (self.rect.x < self.area.width / 2) else False
+
+class bubble(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_image(constants.bubble_pic, alpha=True, scale=0.5)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.restart()
+
+    def restart(self):
+        self.stop = False
+        self.active = False
+        self.rect.center = (2000, 2000)
+        # self.pos = pygame.mouse.get_pos()
+        # self.rect.center = self.pos
+
+    def update(self):
+        if not self.stop and self.active:
+            self.pos = pygame.mouse.get_pos()
+            self.rect.center = (self.pos[0], self.pos[1]+ 6)
+
+    def activate(self):
+        self.active = True
+
+    def suspend(self):
+        self.stop = True
+
+    def recover(self):
+        self.stop = False
 
 class BombIcon(pygame.sprite.Sprite):
     def __init__(self, init_pos):

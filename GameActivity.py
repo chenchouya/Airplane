@@ -35,6 +35,7 @@ class GameActivity(Activity):
     def setup(self):
 
         self.boss = Boss()
+        self.bubble = bubble()
         self.allSprites = MyGroup()
         self.enemy1_group = pygame.sprite.RenderPlain()
         self.enemy2_group = pygame.sprite.RenderPlain()
@@ -68,16 +69,18 @@ class GameActivity(Activity):
         # 初始化飞机图标列表
         self.ufo1 = UFO1()
         self.ufo2 = UFO2()
+        self.float_bubble = floatBubble()
         self.ufo1_group = pygame.sprite.RenderPlain()
         self.ufo2_group = pygame.sprite.RenderPlain()
         self.ufo_group = pygame.sprite.RenderPlain()
+        self.float_bubble_group = pygame.sprite.RenderPlain()
         self.ufo1.add(self.ufo_group, self.ufo1_group, self.allSprites)
         self.ufo2.add(self.ufo_group, self.ufo2_group, self.allSprites)
+        self.float_bubble.add(self.ufo_group, self.float_bubble_group, self.allSprites)
 
         self.score = 0
         # 记录分数
         self.pause = False
-        self.music_icon = True
         self.gameover = False
 
         # set volume
@@ -104,11 +107,13 @@ class GameActivity(Activity):
 
     def settimers(self):
         pygame.time.set_timer(constants.ENEMY_APPEAR_EVENT, constants.enemy12_interval)
-        pygame.time.set_timer(constants.BULLET_SHOOT_EVENT, 250)
+        pygame.time.set_timer(constants.BULLET_SHOOT_EVENT, 100)
         self.timer_ufo1 = threading.Timer(constants.ufo1_interval, self.ufo1_appear, ())
         self.timer_ufo1.start()
         self.timer_ufo2 = threading.Timer(constants.ufo2_interval, self.ufo2_appear, ())
         self.timer_ufo2.start()
+        self.timer_bubble = threading.Timer(constants.bubble_interval, self.bubble_appear, ())
+        self.timer_bubble.start()
         self.timer_e3 = threading.Timer(constants.enemy3_interval, self.enemy3_appear, ())
         self.timer_e3.start()
 
@@ -126,7 +131,7 @@ class GameActivity(Activity):
             self.draw_spirites()
             if self.quit:
                 self.finished()
-                pygame.time.wait(2000)
+                #pygame.time.wait()
                 break
 
     def handle_events(self):
@@ -146,9 +151,13 @@ class GameActivity(Activity):
                         pygame.mixer.unpause()
                         self.allSprites.recover()
                     self.pause = not self.pause
-                if self.pause:
-                    self.allSprites.suspend()
-                    pygame.mixer.pause()
+                # if event.key == K_a:
+                #     self.bubble.activate()
+                #     self.plane.enable_shield()
+                    # self.bubble.add(self.allSprites)
+                # if self.pause:
+                #     self.allSprites.suspend()
+                #     pygame.mixer.pause()
 
             elif event.type == constants.ENEMY_APPEAR_EVENT:
                 if not self.pause:
@@ -166,7 +175,7 @@ class GameActivity(Activity):
 
             elif event.type == constants.BULLET_SHOOT_EVENT:
                 if not self.pause:
-                    if len(self.bullet1_group) <= 5:
+                    if len(self.bullet1_group) <= 10:
                         Bullet1().add(self.bullet1_group, self.bullet_group, self.allSprites)
                     if self.plane.has_bullet2 and len(self.bullet2_group) <= 10:
                         Bullet2(self.plane.rect.bottomleft).add(self.bullet2_group, self.bullet_group, self.allSprites)
@@ -199,30 +208,36 @@ class GameActivity(Activity):
 
             for bomb, enemies in pygame.sprite.groupcollide(self.bomb_group, self.all_enemies, 0, 0,
                                                             self.collide_mask).items():
-                bomb.explode(self.all_enemies)
+                bomb.explode(self.no_colli_group)
                 for enemy in enemies:
                     enemy.explode()
                 self.great_boom_sound.play()
 
-            for e in self.no_colli_group.sprites():
-                if pygame.sprite.collide_mask(self.plane, e):
-                    self.plane.explode()
-                    for s in self.no_colli_group.sprites():
-                        if s in self.boss_group:
-                            pass
-                        else:
-                            s.kill()
-                    if len(self.plane_icon_group) > 0:
-                        self.plane_icon_group.pop(0)
-                    e.explode()
-                    if self.plane.life > 0:
-                        self.continue_tip = self.font.render("Press v to continue", True, (0, 0, 0))
-                        self.screen.blit(self.continue_tip, (40, 500))
-                        pygame.display.update()
-                    self.plane_explode_sound.play()
-                    self.great_boom_sound.play()
-                    self.pause = True
-                    break
+            for enemy in pygame.sprite.spritecollide(self.bubble, self.no_colli_group, 0, collided=self.collide_mask):
+                if enemy not in self.boss_group:
+                    enemy.explode()
+
+            if not self.plane.invincible:
+                for e in self.no_colli_group.sprites():
+                    if pygame.sprite.collide_mask(self.plane, e):
+                        pygame.time.wait(500)
+                        for s in self.no_colli_group.sprites():
+                            if s in self.boss_group:
+                                pass
+                            else:
+                                s.kill()
+                        self.plane.explode()
+                        e.explode()
+                        if len(self.plane_icon_group) > 0:
+                            self.plane_icon_group.pop(0)
+                        if self.plane.life > 0:
+                            self.continue_tip = self.font.render("Press v to continue", True, (0, 0, 0))
+                            self.screen.blit(self.continue_tip, (40, 500))
+                            pygame.display.update()
+                        self.plane_explode_sound.play()
+                        self.great_boom_sound.play()
+                        self.pause = True
+                        break
 
             for ufo in pygame.sprite.spritecollide(self.plane, self.ufo_group, 0, collided=pygame.sprite.collide_mask):
                 if ufo in self.ufo1_group:
@@ -237,6 +252,11 @@ class GameActivity(Activity):
                     self.baozou_sound.play()
                     self.plane.reset_bullet3_timer()
                     threading.Timer(constants.bullet3_last, self.plane.lose_bullet3, ()).start()
+                elif ufo in self.float_bubble_group:
+                    ufo.restart()
+                    self.bubble.activate()
+                    self.plane.enable_shield()
+                    threading.Timer(constants.bubble_last, self.plane.disable_shield, (self.bubble, )).start()
 
         if self.plane.life <= 0:
             self.plane.kill()
@@ -260,10 +280,13 @@ class GameActivity(Activity):
                 e.get_player_pos(self.plane)
 
             try:
+                #draw the bubble
+                if self.bubble.active:
+                    self.bubble.update()
+                    self.screen.blit(self.bubble.image, self.bubble.rect.topleft)
                 self.allSprites.update()
                 self.allSprites.draw(self.screen)
-            except:
-                pass
+            except: pass
 
             for boss in self.boss_group.sprites():
                 if boss.active:
@@ -375,6 +398,10 @@ class GameActivity(Activity):
         self.ufo2.active = True
         threading.Timer(constants.ufo2_interval, self.ufo2_appear, ()).start()
 
+    def bubble_appear(self):
+        self.float_bubble.active = True
+        threading.Timer(constants.bubble_interval, self.bubble_appear, ()).start()
+
     def enemy3_appear(self):
         cnt = 0
         for _ in range(0, constants.enemy3_team):
@@ -424,6 +451,7 @@ class GameActivity(Activity):
         self.timer_ufo1.cancel()
         self.timer_ufo2.cancel()
         self.timer_e3.cancel()
+        self.timer_bubble.cancel()
         pygame.event.set_blocked([constants.ENEMY_APPEAR_EVENT, constants.BULLET_SHOOT_EVENT])
         pygame.event.post(pygame.event.Event(constants.RESTART_EVENT))
 
@@ -460,7 +488,8 @@ class GameActivity(Activity):
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT:
-                self.finished()
-                pygame.quit()
-                exit()
+                self.quit = True
+                #self.finished()
+                #pygame.quit()
+                #exit()
         return events
